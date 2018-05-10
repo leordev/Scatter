@@ -208,7 +208,10 @@ export default class Scatterdapp {
     }
 
     /***
-     * Asks for a new KeyPair generation and returns the Public Key
+     * Generate a new KeyPair and returns the Public Key
+     * @param keypairName - the desired name for the new keypair, it will
+     *                      auto increment if it already exists
+     * @param blockchain - the desired blockchain keypair: 'eos', 'eth'
      */
     generateKeyPair(keypairName, blockchain){
 

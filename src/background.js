@@ -18,6 +18,7 @@ import Permission from './models/Permission'
 import TimingHelpers from './util/TimingHelpers';
 import Error from './models/errors/Error'
 import ContractHelpers from './util/ContractHelpers'
+import PluginRepository from './plugins/PluginRepository'
 const ecc = require('eosjs-ecc');
 import {apis} from './util/BrowserApis';
 
@@ -397,32 +398,43 @@ export default class Background {
         NotificationService.open(new Prompt(PromptTypes.UPDATE_VERSION, payload.domain, network, network, () => {}))
     }
 
-
+    /***
+     * Generates a new keypair for the requested blockchain with the
+     * desired keypair name and returns the public key with it's name
+     * @param sendResponse
+     * @param payload
+     */
     static generateAndAddKeyPair(sendResponse, payload){
         this.lockGuard(sendResponse, () => {
             Background.load(scatter => {
 
-                const clone = scatter.clone();
+                // retrieves the correspondent plugin for the requested blockchain
+                const plugin = PluginRepository.plugin(payload.blockchain);
+                if(!plugin) return false;
 
-                console.log('leo new >>> ', payload);
+                // generates the random pk
+                plugin.randomPrivateKey().then(privateKey => {
+                    const publicKey = plugin.privateToPublic(privateKey);
 
-                // const plugin = PluginRepository.plugin(this.keypair.blockchain);
-                // if(!plugin) return false;
-                //
-                // plugin.randomPrivateKey().then(privateKey => {
-                //     const publicKey = plugin.privateToPublic(privateKey);
-                //     if(plugin.validPublicKey(publicKey) && plugin.validPrivateKey(privateKey)){
-                //         this.keypair.publicKey = publicKey;
-                //         console.log(publicKey);
-                //         this.keypair.privateKey = privateKey;
-                //         this.isValid = true;
-                //     }
-                // });
+                    if(plugin.validPublicKey(publicKey) && plugin.validPrivateKey(privateKey)){
+                        const keypair = {publicKey, privateKey, name: payload.keypairName};
 
+                        // if the keypair name exits increments it
+                        let counter = 0;
+                        while(scatter.keychain.getKeyPairByName(keypair.name)) {
+                            counter++;
+                            keypair.name = payload.keypairName + counter;
+                        }
 
-                // this.update(() => {
-                //     sendResponse(true);
-                // }, clone);
+                        // insert the new keypair and updates scatter
+                        // IMPORTANT: retrieves the keypair name and PUBLIC KEY ONLY
+                        const clone = scatter.clone();
+                        clone.keychain.keypairs.push(keypair);
+                        this.update(() => {
+                            sendResponse({name: keypair.name, publicKey: keypair.publicKey});
+                        }, clone);
+                    }
+                });
             })
         })
     }
