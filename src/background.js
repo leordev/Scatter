@@ -74,6 +74,7 @@ export default class Background {
             case InternalMessageTypes.REQUEST_GET_VERSION:              Background.requestGetVersion(sendResponse); break;
             case InternalMessageTypes.REQUEST_VERSION_UPDATE:           Background.requestVersionUpdate(sendResponse, message.payload); break;
             case InternalMessageTypes.AUTHENTICATE:                     Background.authenticate(sendResponse, message.payload); break;
+            case InternalMessageTypes.GENERATE_AND_ADD_KEY_PAIR:        Background.generateAndAddKeyPair(sendResponse, message.payload); break;
         }
     }
 
@@ -394,6 +395,36 @@ export default class Background {
     static requestVersionUpdate(sendResponse, payload){
         const network = Network.fromJson({host:'', port:0});
         NotificationService.open(new Prompt(PromptTypes.UPDATE_VERSION, payload.domain, network, network, () => {}))
+    }
+
+
+    static generateAndAddKeyPair(sendResponse, payload){
+        this.lockGuard(sendResponse, () => {
+            Background.load(scatter => {
+
+                const clone = scatter.clone();
+
+                console.log('leo new >>> ', payload);
+
+                // const plugin = PluginRepository.plugin(this.keypair.blockchain);
+                // if(!plugin) return false;
+                //
+                // plugin.randomPrivateKey().then(privateKey => {
+                //     const publicKey = plugin.privateToPublic(privateKey);
+                //     if(plugin.validPublicKey(publicKey) && plugin.validPrivateKey(privateKey)){
+                //         this.keypair.publicKey = publicKey;
+                //         console.log(publicKey);
+                //         this.keypair.privateKey = privateKey;
+                //         this.isValid = true;
+                //     }
+                // });
+
+
+                // this.update(() => {
+                //     sendResponse(true);
+                // }, clone);
+            })
+        })
     }
 
 

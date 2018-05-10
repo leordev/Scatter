@@ -3,6 +3,7 @@ import * as NetworkMessageTypes from './messages/NetworkMessageTypes'
 import * as PairingTags from './messages/PairingTags'
 import Error from './models/errors/Error'
 import Network from './models/Network'
+import {BlockchainsArray} from './models/Blockchains'
 import IdGenerator from './util/IdGenerator';
 import PluginRepository from './plugins/PluginRepository';
 const ecc = require('eosjs-ecc');
@@ -204,6 +205,20 @@ export default class Scatterdapp {
             whatfor,
             isHash
         }, true);
+    }
+
+    /***
+     * Asks for a new KeyPair generation and returns the Public Key
+     */
+    generateKeyPair(keypairName, blockchain){
+
+        if(!BlockchainsArray.filter(item => item.value === blockchain).length)
+            throws('Invalid blockchain');
+
+        return _send(NetworkMessageTypes.GENERATE_AND_ADD_KEY_PAIR, {
+            keypairName,
+            blockchain
+        });
     }
 
 }

@@ -87,6 +87,7 @@ class Content {
             case NetworkMessageTypes.REQUEST_VERSION_UPDATE:            this.requestVersionUpdate(nonSyncMessage); break;
             case NetworkMessageTypes.AUTHENTICATE:                      this.authenticate(nonSyncMessage); break;
             case NetworkMessageTypes.IDENTITY_FROM_PERMISSIONS:         this.identityFromPermissions(nonSyncMessage); break;
+            case NetworkMessageTypes.GENERATE_AND_ADD_KEY_PAIR:          this.generateAndAddKeyPair(nonSyncMessage); break;
             default:                                                    stream.send(nonSyncMessage.error(Error.maliciousEvent()), PairingTags.INJECTED)
         }
     }
@@ -152,6 +153,12 @@ class Content {
     authenticate(message){
         if(!isReady) return;
         InternalMessage.payload(InternalMessageTypes.AUTHENTICATE, message.payload)
+            .send().then(res => this.respond(message, res))
+    }
+
+    generateAndAddKeyPair(message){
+        if(!isReady) return;
+        InternalMessage.payload(InternalMessageTypes.GENERATE_AND_ADD_KEY_PAIR, message.payload)
             .send().then(res => this.respond(message, res))
     }
 
