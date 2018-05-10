@@ -208,7 +208,7 @@ export default class Scatterdapp {
     }
 
     /***
-     * Generate a new KeyPair and returns the Public Key
+     * Request for a generation of a new KeyPair and returns the Public Key
      * @param keypairName - the desired name for the new keypair, it will
      *                      auto increment if it already exists
      * @param blockchain - the desired blockchain keypair: 'eos', 'eth'
@@ -220,7 +220,8 @@ export default class Scatterdapp {
 
         return _send(NetworkMessageTypes.GENERATE_AND_ADD_KEY_PAIR, {
             keypairName,
-            blockchain
+            blockchain,
+            domain: locationHost()
         });
     }
 

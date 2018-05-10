@@ -453,6 +453,21 @@ export default {
          get you to download something. Make sure you always download Scatter from the proper location.`
     ],
 
+    //4
+    [KEYS.REQUEST_NewKeyPair]:[
+        /*{DOMAIN}*/ 'wants to add a new keypair to your Scatter for ' /*{BLOCKCHAIN}*/,
+
+        'Some applications help you to create a new Account.',
+
+        `This in no way gives the application any access to your Scatter, 
+         neither gives the private key to anyone, remember, it never leaves Scatter.
+         Adding a keypair through this interface simply saves you
+         the effort of manually adding it from your KeyPairs panel.`,
+
+        `Make sure that you copy the private key in a safe place, take a picture,
+        write it down, print or whatever is more convenient to you and keep it SAFE.`
+    ],
+
 }
 
 

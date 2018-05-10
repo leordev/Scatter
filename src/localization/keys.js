@@ -190,6 +190,7 @@ export const REQUEST_IdentityNoIdentities = 'req_id_no_ids';
 export const REQUEST_SignatureWhitelist = 'req_sig_white';
 export const REQUEST_ScatterIsLocked = 'req_scat_locked';
 export const REQUEST_UpdateVersion = 'req_updt_vers';
+export const REQUEST_NewKeyPair = 'req_new_key_pair';
 
 
 

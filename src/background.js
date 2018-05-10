@@ -412,12 +412,15 @@ export default class Background {
                 const plugin = PluginRepository.plugin(payload.blockchain);
                 if(!plugin) return false;
 
+                let promptData = { blockchain: payload.blockchain };
+                let keypair = null;
+
                 // generates the random pk
                 plugin.randomPrivateKey().then(privateKey => {
                     const publicKey = plugin.privateToPublic(privateKey);
 
                     if(plugin.validPublicKey(publicKey) && plugin.validPrivateKey(privateKey)){
-                        const keypair = {publicKey, privateKey, name: payload.keypairName};
+                        keypair = {publicKey, privateKey, name: payload.keypairName};
 
                         // if the keypair name exits increments it
                         let counter = 0;
@@ -426,15 +429,29 @@ export default class Background {
                             keypair.name = payload.keypairName + counter;
                         }
 
-                        // insert the new keypair and updates scatter
-                        // IMPORTANT: retrieves the keypair name and PUBLIC KEY ONLY
-                        const clone = scatter.clone();
-                        clone.keychain.keypairs.push(keypair);
-                        this.update(() => {
-                            sendResponse({name: keypair.name, publicKey: keypair.publicKey});
-                        }, clone);
+                        promptData.keypair = keypair;
+
+                        // Popup Request new KeyPair Window
+                        NotificationService.open(new Prompt(PromptTypes.REQUEST_NEW_KEY_PAIR,
+                            payload.domain, null, promptData, approved => {
+
+                            if(!approved || approved.hasOwnProperty('isError')) {
+                                sendResponse(approved);
+                            } else {
+
+                                // insert the new keypair and updates scatter
+                                // IMPORTANT: retrieves the keypair name and PUBLIC KEY ONLY
+                                const clone = scatter.clone();
+                                clone.keychain.keypairs.push(keypair);
+                                this.update(() => {
+                                    sendResponse({name: keypair.name, publicKey: keypair.publicKey});
+                                }, clone);
+
+                            }
+                        }));
                     }
                 });
+
             })
         })
     }

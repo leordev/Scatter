@@ -25,6 +25,7 @@ import RequestArbitrarySignaturePrompt from '../prompts/RequestArbitrarySignatur
 import RequestAddNetwork from '../prompts/RequestAddNetwork.vue'
 import RequestUnlock from '../prompts/RequestUnlock.vue'
 import UpdateVersion from '../prompts/UpdateVersion.vue'
+import RequestNewKeyPair from '../prompts/RequestNewKeyPair.vue'
 
 export const promptPrefix = 'prompt_';
 
@@ -58,6 +59,7 @@ export const RouteNames = {
     PROMPT_REQUEST_ADD_NETWORK:`${promptPrefix}${PromptTypes.REQUEST_ADD_NETWORK}`,
     PROMPT_REQUEST_UNLOCK:`${promptPrefix}${PromptTypes.REQUEST_UNLOCK}`,
     PROMPT_UPDATE_VERSION:`${promptPrefix}${PromptTypes.UPDATE_VERSION}`,
+    REQUEST_NEW_KEY_PAIR:`${promptPrefix}${PromptTypes.REQUEST_NEW_KEY_PAIR}`,
 };
 
 const RouteViews = {
@@ -90,6 +92,7 @@ const RouteViews = {
     [RouteNames.PROMPT_REQUEST_ADD_NETWORK]:RequestAddNetwork,
     [RouteNames.PROMPT_REQUEST_UNLOCK]:RequestUnlock,
     [RouteNames.PROMPT_UPDATE_VERSION]:UpdateVersion,
+    [RouteNames.REQUEST_NEW_KEY_PAIR]:RequestNewKeyPair,
 };
 
 export const RouteDepth = {
