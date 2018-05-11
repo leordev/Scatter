@@ -24,6 +24,7 @@ export const GENERIC_Import = 'gen_import';
 export const GENERIC_ChainID = 'gen_chain_id';
 export const GENERIC_Blockchain = 'gen_blockchain';
 export const GENERIC_Account = 'gen_account';
+export const GENERIC_Next = 'gen_next';
 
 export const PLACEHOLDER_Name = 'plc_name';
 export const PLACEHOLDER_PublicKey = 'plc_pubk';
@@ -137,6 +138,7 @@ export const KEYPAIRS_NoKeyPairsDescription = 'kps_desc';
 
 export const KEYPAIR_Header = 'kp_head';
 export const KEYPAIR_Description = 'kp_desc';
+export const KEYPAIR_RequestedDescription = 'kp_req_desc';
 export const KEYPAIR_Important = 'kp_imp!';
 export const KEYPAIR_Validation_Header = 'kp_v_head';
 export const KEYPAIR_Validation_Valid = 'kp_v_valid';

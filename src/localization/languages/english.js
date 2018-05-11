@@ -21,6 +21,7 @@ export default {
     [KEYS.GENERIC_ChainID]:'Chain ID',
     [KEYS.GENERIC_Blockchain]:'Blockchain',
     [KEYS.GENERIC_Account]:'Account',
+    [KEYS.GENERIC_Next]:'Next',
 
     [KEYS.PLACEHOLDER_Name]:'Name',
     [KEYS.PLACEHOLDER_PublicKey]:'Public Key',
@@ -186,6 +187,11 @@ export default {
     `,
 
     [KEYS.KEYPAIR_Header]:`Generate a new Key Pair`,
+    [KEYS.KEYPAIR_RequestedDescription]:
+        /*DOMAIN*/ ` is asking to create a new account, for that you will need brand new key pairs. 
+        These key pairs are generated locally on your machine and are never sent anywhere. You can 
+        also paste in a private key and it will automatically generate the public key.
+    `,
     [KEYS.KEYPAIR_Description]:`
         You can use this panel to generate key pairs. These key pairs are generated locally on your machine 
         and are never sent anywhere. You can also paste in a private key and it will automatically generate the public key.

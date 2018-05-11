@@ -210,8 +210,9 @@ export default class Scatterdapp {
      * Request a new Identity for Applications that offer Signup
      * @param fields - You can specify required fields such as ['email', 'country', 'firstname']
      */
-    requestNewIdentity(fields = {}){
+    requestNewIdentity(fields = {}, application){
         return _send(NetworkMessageTypes.REQUEST_NEW_IDENTITY, {
+            application,
             domain:locationHost(),
             network:network,
             fields

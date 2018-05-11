@@ -168,10 +168,10 @@ export default class Background {
 
             StorageService.save(scatter).then(saved => {
                 scatter.decrypt(seed);
-                sendResponse(scatter)
-            });
+                sendResponse(scatter);
 
-            Background.updateNotificationIcon(scatter.notifications);
+                Background.updateNotificationIcon(scatter.notifications);
+            });
         })
     }
 
@@ -303,8 +303,14 @@ export default class Background {
         this.lockGuard(sendResponse, () => {
             Background.load(scatter => {
                 const clone = scatter.clone();
-                clone.notifications.unshift(new Notification(NotificationTypes.REQUEST_NEW_IDENTITY, payload));
 
+                const notification = new Notification(NotificationTypes.REQUEST_NEW_IDENTITY, payload);
+                if(!notification.isValid()) {
+                    sendResponse(false);
+                    return false;
+                }
+
+                clone.notifications.unshift(notification);
                 this.update(() => {
                     sendResponse(true);
                 }, clone);

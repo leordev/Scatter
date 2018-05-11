@@ -1,15 +1,23 @@
 <template>
     <section class="network scroller">
         <section class="panel">
-            <figure class="header">{{locale(langKeys.KEYPAIR_Header)}}</figure>
-            <figure class="sub-header">{{locale(langKeys.KEYPAIR_Description)}}</figure>
-            <figure class="sub-header" style="color:red; font-weight:bold; font-size:13px;">{{locale(langKeys.KEYPAIR_Important)}}</figure>
-            <sel :selected="keypair.blockchain.toUpperCase()" :options="blockchains" :parser="blockchain => blockchain.key.toUpperCase()" v-on:changed="changed => bind(changed.value, 'blockchain')" :key="1"></sel>
+            <figure class="header">{{applicationName}}: {{locale(langKeys.KEYPAIR_Header)}}</figure>
+            <div v-if="requestNewIdentity">
+                <figure class="sub-header">{{applicationName}} {{locale(langKeys.KEYPAIR_RequestedDescription)}}</figure>
+                <figure class="sub-header" style="color:red; font-weight:bold; font-size:13px;">{{locale(langKeys.KEYPAIR_Important)}}</figure>
+                <figure class="sub-header" style="font-weight:bold; font-size:13px;">{{blockchainName}} {{locale(langKeys.GENERIC_Blockchain)}}</figure>
+            </div>
+            <div v-else>
+                <figure class="sub-header">{{locale(langKeys.KEYPAIR_Description)}}</figure>
+                <figure class="sub-header" style="color:red; font-weight:bold; font-size:13px;">{{locale(langKeys.KEYPAIR_Important)}}</figure>
+                <sel :selected="keypair.blockchain.toUpperCase()" :options="blockchains" :parser="blockchain => blockchain.key.toUpperCase()" v-on:changed="changed => bind(changed.value, 'blockchain')" :key="1"></sel>
+            </div>
             <cin :placeholder="locale(langKeys.PLACEHOLDER_Name)" :text="keypair.name" v-on:changed="changed => bind(changed, 'name')"></cin>
             <cin :placeholder="locale(langKeys.PLACEHOLDER_PublicKey)" :text="keypair.publicKey" v-on:changed="changed => bind(changed, 'publicKey')"></cin>
             <cin :placeholder="locale(langKeys.PLACEHOLDER_PrivateKey)" @changed="makePublicKey" :text="keypair.privateKey" v-on:changed="changed => bind(changed, 'privateKey')"></cin>
             <btn :text="locale(langKeys.BUTTON_GenerateKeyPair)" @click.native="generateKeyPair()" margined="true"></btn>
-            <btn :text="locale(langKeys.GENERIC_Save)" half="true" @click.native="saveKeyPair()" margined="true"></btn>
+            <btn v-if="requestNewIdentity" :text="locale(langKeys.GENERIC_Next)" half="true" @click.native="saveKeyPair(true)" margined="true"></btn>
+            <btn v-else="requestNewIdentity" :text="locale(langKeys.GENERIC_Save)" half="true" @click.native="saveKeyPair(false)" margined="true"></btn>
             <btn :text="locale(langKeys.BUTTON_Copy)" half="true" @click.native="copyKeyPair()" margined="true"></btn>
         </section>
 
@@ -36,15 +44,26 @@
     export default {
         data(){ return {
             blockchains:BlockchainsArray,
-            keypair:KeyPair.placeholder(),
+            keypair: KeyPair.placeholder(),
             isValid:false,
+            blockchainName: '',
+            applicationName: ''
         }},
+        mounted() {
+            if(this.requestNewIdentity) {
+                this.applicationName = this.requestNewIdentity.data.application;
+                this.keypair.blockchain = this.requestNewIdentity.data.fields.account.blockchain;
+                this.keypair.name = this.applicationName + 'Keys';
+                this.blockchainName = this.keypair.blockchain.toUpperCase();
+            }
+        },
         computed: {
             ...mapState([
                 'scatter'
             ]),
             ...mapGetters([
-                'networks'
+                'networks',
+                'requestNewIdentity'
             ])
         },
         methods: {
@@ -109,7 +128,12 @@
                     return this[Actions.PUSH_ALERT](AlertMsg.KeyPairExists());
 
                 scatter.keychain.keypairs.push(this.keypair);
-                this[Actions.UPDATE_STORED_SCATTER](scatter).then(() => this.$router.back());
+                this[Actions.UPDATE_STORED_SCATTER](scatter).then(() => {
+                        if(this.requestNewIdentity) {
+                            // todo: move to new identity page
+                        } else this.$router.back();
+                    }
+                );
             },
             ...mapActions([
                 Actions.UPDATE_STORED_SCATTER,
