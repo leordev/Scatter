@@ -67,6 +67,7 @@ export default class Background {
             case InternalMessageTypes.DESTROY:                          Background.destroy(sendResponse); break;
             case InternalMessageTypes.IDENTITY_FROM_PERMISSIONS:        Background.identityFromPermissions(sendResponse, message.payload); break;
             case InternalMessageTypes.GET_OR_REQUEST_IDENTITY:          Background.getOrRequestIdentity(sendResponse, message.payload); break;
+            case InternalMessageTypes.REQUEST_NEW_IDENTITY:             Background.requestNewIdentity(sendResponse, message.payload); break;
             case InternalMessageTypes.FORGET_IDENTITY:                  Background.forgetIdentity(sendResponse, message.payload); break;
             case InternalMessageTypes.REQUEST_SIGNATURE:                Background.requestSignature(sendResponse, message.payload); break;
             case InternalMessageTypes.REQUEST_ARBITRARY_SIGNATURE:      Background.requestArbitrarySignature(sendResponse, message.payload); break;
@@ -275,6 +276,25 @@ export default class Background {
 
                     sendResponse(identity);
                 });
+            });
+        })
+    }
+
+    /***
+     * Enqueue a New Identity Request
+     * @param sendResponse
+     * @param payload
+     */
+    static requestNewIdentity(sendResponse, payload){
+        this.lockGuard(sendResponse, () => {
+
+            Background.load(scatter => {
+                const {domain, fields} = payload;
+
+                // proof of concept changing scatter icon
+                console.log('>>> changing scatter icon');
+                chrome.browserAction.setBadgeText( { text: "!" } );
+                chrome.browserAction.setBadgeBackgroundColor({color: [255,0,0,255]});
             });
         })
     }

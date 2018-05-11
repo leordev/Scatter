@@ -206,4 +206,16 @@ export default class Scatterdapp {
         }, true);
     }
 
+    /***
+     * Request a new Identity for Applications that offer Signup
+     * @param fields - You can specify required fields such as ['email', 'country', 'firstname']
+     */
+    requestNewIdentity(fields = {}){
+        return _send(NetworkMessageTypes.REQUEST_NEW_IDENTITY, {
+            domain:locationHost(),
+            network:network,
+            fields
+        });
+    }
+
 }
