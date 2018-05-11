@@ -6,6 +6,7 @@ import {actions} from './actions';
 import * as LANG_KEYS from '../localization/keys';
 
 import {IdentityRequiredFields} from '../models/Identity'
+import * as NotificationTypes from "../models/notifications/NotificationTypes";
 
 Vue.use(Vuex);
 
@@ -27,6 +28,11 @@ const getters = {
     histories:state => state.scatter.histories,
     autoLockInterval:state => state.scatter.settings.inactivityInterval,
     language:state => state.scatter.settings.language,
+    notifications:state => state.scatter.notifications,
+
+    // handle new identity
+    requestNewIdentity:state => state.scatter.notifications.find(notification =>
+        notification.type === NotificationTypes.REQUEST_NEW_IDENTITY),
 
     // FOR PROMPTS ONLY
     identityFields:state => IdentityRequiredFields.fromJson(state.prompt.data),

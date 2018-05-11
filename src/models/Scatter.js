@@ -11,6 +11,7 @@ export default class Scatter {
         this.meta = Meta.placeholder();
         this.keychain = Keychain.placeholder();
         this.settings = Settings.placeholder();
+        this.notifications = [];
         this.histories = [];
         this.hash = Hasher.insecureHash(IdGenerator.text(2048));
     }

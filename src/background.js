@@ -20,6 +20,8 @@ import Error from './models/errors/Error'
 import ContractHelpers from './util/ContractHelpers'
 const ecc = require('eosjs-ecc');
 import {apis} from './util/BrowserApis';
+import Notification from './models/notifications/Notification';
+import * as NotificationTypes from './models/notifications/NotificationTypes';
 
 // Gets bound when a user logs into scatter
 // and unbound when they log out
@@ -28,6 +30,9 @@ let seed = '';
 
 let inactivityInterval = 0;
 let timeoutLocker = null;
+
+// initialize notification icon background color
+chrome.browserAction.setBadgeBackgroundColor({color: 'red'});
 
 // This is the script that runs in the extension's background ( singleton )
 export default class Background {
@@ -85,6 +90,11 @@ export default class Background {
         if (seed) timeoutLocker = setTimeout(() => seed = '', inactivityInterval);
     }
 
+    // Handlers notification icon based
+    static updateNotificationIcon(notifications) {
+        chrome.browserAction.setBadgeText( { text: notifications && notifications.length > 0 ? '!' : '' } );
+    }
+
 
 
     /********************************************/
@@ -133,7 +143,9 @@ export default class Background {
             inactivityInterval = scatter.settings.inactivityInterval;
 
             if(seed.length) scatter.decrypt(seed);
-            sendResponse(scatter)
+            sendResponse(scatter);
+
+            Background.updateNotificationIcon(scatter.notifications);
         })
     }
 
@@ -157,7 +169,9 @@ export default class Background {
             StorageService.save(scatter).then(saved => {
                 scatter.decrypt(seed);
                 sendResponse(scatter)
-            })
+            });
+
+            Background.updateNotificationIcon(scatter.notifications);
         })
     }
 
@@ -287,14 +301,13 @@ export default class Background {
      */
     static requestNewIdentity(sendResponse, payload){
         this.lockGuard(sendResponse, () => {
-
             Background.load(scatter => {
-                const {domain, fields} = payload;
+                const clone = scatter.clone();
+                clone.notifications.unshift(new Notification(NotificationTypes.REQUEST_NEW_IDENTITY, payload));
 
-                // proof of concept changing scatter icon
-                console.log('>>> changing scatter icon');
-                chrome.browserAction.setBadgeText( { text: "!" } );
-                chrome.browserAction.setBadgeBackgroundColor({color: [255,0,0,255]});
+                this.update(() => {
+                    sendResponse(true);
+                }, clone);
             });
         })
     }

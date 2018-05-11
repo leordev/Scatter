@@ -38,7 +38,17 @@ class Popup {
         new VueInitializer(routes, components, middleware, (router, store) => {
             store.dispatch(Actions.IS_UNLOCKED)
                 .then(unlocked => {
-                    router.push({name:RouteNames.MAIN_MENU});
+
+                    // verify if application is requesting a new identity
+                    const { requestNewIdentity } = store.getters;
+
+                    // if positive goes to keypair, followed by new identity screen
+                    if(requestNewIdentity) {
+                        router.push({name: RouteNames.KEYPAIRS});
+                    } else { // otherwise, just goes to main menu
+                        router.push({name: RouteNames.MAIN_MENU});
+                    }
+
                 });
         });
     }
